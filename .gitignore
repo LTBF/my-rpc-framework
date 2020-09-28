@@ -1,3 +1,7 @@
 *.iml
 .idea/
-target/
+client/target/
+rpc-framework-common/target/
+rpc-framework-simple/target/
+server/target/
+service-api/target/
