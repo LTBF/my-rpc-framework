@@ -13,6 +13,7 @@ public class ServerClient {
 
     public static void main(String[] args) {
 
+        //todo Map记录服务，实现多服务，包扫描
         RPCServer rpcServer = new RPCServer();
         IUserService userService = new UserServiceImpl();
         rpcServer.register(userService, 8888);

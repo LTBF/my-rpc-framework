@@ -1,16 +1,13 @@
 package github.ltbf;
 
+import github.ltbf.dto.RpcRequest;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.net.Socket;
 
 /**
  * @author shkstart
@@ -31,25 +28,12 @@ public class RPCClientProxy implements InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        RPCRequest rpcRequest = RPCRequest.builder().methodName(method.getName())
-                .interfaceName(proxy.getClass().getName())
+        RpcRequest rpcRequest = RpcRequest.builder().methodName(method.getName())
+                .interfaceName(proxy.getClass().getInterfaces()[0].getName())
                 .paramTypes(method.getParameterTypes())
                 .parameters(args).build();
-        logger.info("client ready to connect...");
+        logger.info("client invoke method ing...");
 
-        try(Socket socket = new Socket(host, port);
-            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-            ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());){
-
-            oos.writeObject(rpcRequest);
-            //oos.flush();
-            Object result = ois.readObject();
-            return result;
-        }
-        catch (IOException | ClassNotFoundException e){
-            logger.error("IOExcepton:" + e);
-        }
-
-        return null;
+        return RpcClient.sendRpcRequest(rpcRequest, host, port);
     }
 }

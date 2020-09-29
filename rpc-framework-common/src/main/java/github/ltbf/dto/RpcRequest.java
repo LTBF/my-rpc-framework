@@ -1,4 +1,4 @@
-package github.ltbf;
+package github.ltbf.dto;
 
 import lombok.Builder;
 import lombok.Data;
@@ -12,7 +12,8 @@ import java.io.Serializable;
  */
 @Data
 @Builder
-public class RPCRequest implements Serializable {
+public class RpcRequest implements Serializable {
+    private static final long serialVersionUID = 5937933279954325740L;
     private String interfaceName;
     private String methodName;
     private Object[] parameters;
