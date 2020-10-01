@@ -1,4 +1,4 @@
-package github.ltbf;
+package github.ltbf.remote.socket;
 
 import github.ltbf.dto.RpcRequest;
 import lombok.AllArgsConstructor;
@@ -29,7 +29,7 @@ public class RPCClientProxy implements InvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         RpcRequest rpcRequest = RpcRequest.builder().methodName(method.getName())
-                .interfaceName(proxy.getClass().getInterfaces()[0].getName())
+                .interfaceName(method.getDeclaringClass().getName())   // 根据方法获取类名
                 .paramTypes(method.getParameterTypes())
                 .parameters(args).build();
         logger.info("client invoke method ing...");

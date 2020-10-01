@@ -1,11 +1,14 @@
-package github.ltbf;
+package github.ltbf.remote.socket;
 
 import github.ltbf.dto.RpcRequest;
 import github.ltbf.dto.RpcResponse;
 import github.ltbf.enumeration.RpcResponseCode;
+import github.ltbf.registry.IServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.imageio.spi.RegisterableService;
+import javax.imageio.spi.ServiceRegistry;
 import javax.xml.ws.Response;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -21,14 +24,14 @@ import java.net.Socket;
 public class WorkThread implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RPCServer.class);
     private Socket socket;
-    private Object service;
+    private IServiceRegistry serviceRegistry;
 
     public WorkThread() {
     }
 
-    public WorkThread(Socket socket, Object service) {
+    public WorkThread(Socket socket, IServiceRegistry serviceRegistry) {
         this.socket = socket;
-        this.service = service;
+        this.serviceRegistry = serviceRegistry;
     }
 
     @Override
@@ -38,27 +41,33 @@ public class WorkThread implements Runnable {
         ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream())){
             // 读入对象
             RpcRequest rpcRequest = (RpcRequest)ois.readObject();
-            Object result = invokeTargetMethod(rpcRequest);
-            if(!(result instanceof Response)){
-                result = RpcResponse.success(result);
-            }
+            String interfaceName = rpcRequest.getInterfaceName();
+            Object service = serviceRegistry.getService(interfaceName);
+            Object result = handle(rpcRequest, service);
             oos.writeObject(result);
             oos.flush();
         }
-        catch(IOException | ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e){
+        catch(IOException | ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException  e) {
             logger.error("occur excetpin on " + e);
         }
     }
-    public Object invokeTargetMethod(RpcRequest rpcRequest) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        Class<?> cls = Class.forName(rpcRequest.getInterfaceName());
-        // 判断类是否实现了对应的接口
-        if (!cls.isAssignableFrom(service.getClass())) {
+
+    private Object handle(RpcRequest rpcRequest, Object service) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+
+        // 未注册的服务
+        if(service == null){
             return RpcResponse.fail(RpcResponseCode.NOT_FOUND_CLASS);
         }
+
         Method method = service.getClass().getMethod(rpcRequest.getMethodName(), rpcRequest.getParamTypes());
-        if (null == method) {
+        // 未实现的方法
+        if(method == null){
             return RpcResponse.fail(RpcResponseCode.NOT_FOUND_METHOD);
         }
-        return method.invoke(service, rpcRequest.getParameters());
+        // 调用方法
+        Object result = method.invoke(service, rpcRequest.getParameters());
+        logger.info("server call method[" + method.getName() + "] success...");
+
+        return RpcResponse.success(result);
     }
 }

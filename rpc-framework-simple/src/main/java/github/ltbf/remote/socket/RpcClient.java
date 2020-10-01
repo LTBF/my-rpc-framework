@@ -1,4 +1,4 @@
-package github.ltbf;
+package github.ltbf.remote.socket;
 
 import github.ltbf.dto.RpcRequest;
 import github.ltbf.dto.RpcResponse;
