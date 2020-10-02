@@ -1,6 +1,6 @@
 package github.ltbf.registry.impl;
 
-import github.ltbf.registry.IServiceRegistry;
+import github.ltbf.registry.ServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,12 +12,12 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author shkstart
  * @create 2020-09-30 15:23
  */
-public class DefaultServiceRegistry implements IServiceRegistry {
+public class DefaultServiceRegistry implements ServiceRegistry {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultServiceRegistry.class);
 
-    private final Map<String, Object> serviceMap = new ConcurrentHashMap<>();
-    private final Set<String> registeredService = ConcurrentHashMap.newKeySet();
+    private static final Map<String, Object> serviceMap = new ConcurrentHashMap<>();
+    private static final Set<String> registeredService = ConcurrentHashMap.newKeySet();
 
     /**
      * TODO 修改为扫描实现注册

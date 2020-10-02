@@ -1,8 +1,9 @@
 package github.ltbf;
 
-import github.ltbf.registry.IServiceRegistry;
+import github.ltbf.registry.ServiceRegistry;
 import github.ltbf.registry.impl.DefaultServiceRegistry;
-import github.ltbf.remote.socket.RPCServer;
+import github.ltbf.transport.netty.NettyRpcServer;
+import github.ltbf.transport.socket.RPCServer;
 import github.ltbf.service.IProductService;
 import github.ltbf.service.IUserService;
 import github.ltbf.service.impl.ProductServiceImpl;
@@ -21,13 +22,13 @@ public class ServerClient {
         //todo Map记录服务，实现多服务，包扫描
         IUserService userService = new UserServiceImpl();
         IProductService productService = new ProductServiceImpl();
-        IServiceRegistry serviceRegistry = new DefaultServiceRegistry();
+        ServiceRegistry serviceRegistry = new DefaultServiceRegistry();
         serviceRegistry.register(userService);
         serviceRegistry.register(productService);
 
         // 开启服务
-        RPCServer rpcServer = new RPCServer(serviceRegistry);
-        rpcServer.start(8888);
+        NettyRpcServer server = new NettyRpcServer(8888);
+        server.start();
 
     }
 }

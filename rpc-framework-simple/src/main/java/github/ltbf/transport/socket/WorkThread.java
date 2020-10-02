@@ -1,15 +1,12 @@
-package github.ltbf.remote.socket;
+package github.ltbf.transport.socket;
 
 import github.ltbf.dto.RpcRequest;
 import github.ltbf.dto.RpcResponse;
 import github.ltbf.enumeration.RpcResponseCode;
-import github.ltbf.registry.IServiceRegistry;
+import github.ltbf.registry.ServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.imageio.spi.RegisterableService;
-import javax.imageio.spi.ServiceRegistry;
-import javax.xml.ws.Response;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -24,12 +21,12 @@ import java.net.Socket;
 public class WorkThread implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RPCServer.class);
     private Socket socket;
-    private IServiceRegistry serviceRegistry;
+    private ServiceRegistry serviceRegistry;
 
     public WorkThread() {
     }
 
-    public WorkThread(Socket socket, IServiceRegistry serviceRegistry) {
+    public WorkThread(Socket socket, ServiceRegistry serviceRegistry) {
         this.socket = socket;
         this.serviceRegistry = serviceRegistry;
     }

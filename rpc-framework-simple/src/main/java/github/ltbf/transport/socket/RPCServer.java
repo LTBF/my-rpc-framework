@@ -1,6 +1,6 @@
-package github.ltbf.remote.socket;
+package github.ltbf.transport.socket;
 
-import github.ltbf.registry.IServiceRegistry;
+import github.ltbf.registry.ServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,12 +18,12 @@ public class RPCServer {
 
     private static final Logger logger = LoggerFactory.getLogger(RPCServer.class);
     private ExecutorService threadPool;
-    private IServiceRegistry serviceRegistry;
+    private ServiceRegistry serviceRegistry;
 
     public RPCServer() {
     }
 
-    public RPCServer(IServiceRegistry serviceRegistry){
+    public RPCServer(ServiceRegistry serviceRegistry){
 
         BlockingQueue<Runnable> blockingQueue = new ArrayBlockingQueue<>(100);
 

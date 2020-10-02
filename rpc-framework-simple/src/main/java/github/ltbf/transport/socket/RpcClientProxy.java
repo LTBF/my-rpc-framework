@@ -1,6 +1,7 @@
-package github.ltbf.remote.socket;
+package github.ltbf.transport.socket;
 
 import github.ltbf.dto.RpcRequest;
+import github.ltbf.transport.RpcClient;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,17 +15,16 @@ import java.lang.reflect.Proxy;
  * @create 2020-09-28 15:47
  */
 @AllArgsConstructor
-public class RPCClientProxy implements InvocationHandler {
+public class RpcClientProxy implements InvocationHandler {
 
-    private static final Logger logger = LoggerFactory.getLogger(RPCClientProxy.class);
-    private String host;
-    private Integer port;
+    private static final Logger logger = LoggerFactory.getLogger(RpcClientProxy.class);
+    private RpcClient rpcClient;
+
 
     public <T>T getProxy(Class<T> clazz){
         return (T)Proxy.newProxyInstance(getClass().getClassLoader(),
                 new Class<?>[]{clazz}, this);
     }
-
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -34,6 +34,6 @@ public class RPCClientProxy implements InvocationHandler {
                 .parameters(args).build();
         logger.info("client invoke method ing...");
 
-        return RpcClient.sendRpcRequest(rpcRequest, host, port);
+        return rpcClient.sendRpcRequest(rpcRequest);
     }
 }

@@ -1,8 +1,10 @@
-package github.ltbf.remote.socket;
+package github.ltbf.transport.socket;
 
 import github.ltbf.dto.RpcRequest;
 import github.ltbf.dto.RpcResponse;
 import github.ltbf.enumeration.RpcResponseCode;
+import github.ltbf.transport.RpcClient;
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,11 +17,15 @@ import java.net.Socket;
  * @author shkstart
  * @create 2020-09-29 14:38
  */
-public class RpcClient {
+@AllArgsConstructor
+public class SocketRpcClient implements RpcClient {
 
-    public static final Logger logger = LoggerFactory.getLogger(RpcClient.class);
+    public static final Logger logger = LoggerFactory.getLogger(SocketRpcClient.class);
 
-    public static Object sendRpcRequest(RpcRequest rpcRequest, String host, int port){
+    private String host;
+    private int port;
+
+    public Object sendRpcRequest(RpcRequest rpcRequest){
 
         try(Socket socket = new Socket(host, port)){
             ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());

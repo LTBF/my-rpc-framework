@@ -1,10 +1,10 @@
 package github.lfbf;
 
 import github.ltbf.dao.Product;
-import github.ltbf.remote.socket.RPCClientProxy;
-import github.ltbf.dao.User;
+import github.ltbf.transport.RpcClient;
+import github.ltbf.transport.netty.NettyRpcClient;
+import github.ltbf.transport.socket.RpcClientProxy;
 import github.ltbf.service.IProductService;
-import github.ltbf.service.IUserService;
 
 /**
  * @author shkstart
@@ -13,7 +13,9 @@ import github.ltbf.service.IUserService;
 public class Client {
 
     public static void main(String[] args) {
-        RPCClientProxy rpcClientProxy = new RPCClientProxy("127.0.0.1", 8888);
+
+        RpcClient rpcClient = new NettyRpcClient("127.0.0.1", 8888);
+        RpcClientProxy rpcClientProxy = new RpcClientProxy(rpcClient);
         /*
         IUserService userService = rpcClientProxy.getProxy(IUserService.class);
         User user = userService.findById(111);
