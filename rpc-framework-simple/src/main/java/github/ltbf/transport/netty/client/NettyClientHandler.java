@@ -1,4 +1,4 @@
-package github.ltbf.transport.netty;
+package github.ltbf.transport.netty.client;
 
 import github.ltbf.dto.RpcResponse;
 import io.netty.channel.ChannelHandlerContext;

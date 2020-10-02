@@ -14,16 +14,16 @@ import java.util.concurrent.*;
  * @create 2020-09-28 11:58
  */
 
-public class RPCServer {
+public class SocketRpcServer {
 
-    private static final Logger logger = LoggerFactory.getLogger(RPCServer.class);
+    private static final Logger logger = LoggerFactory.getLogger(SocketRpcServer.class);
     private ExecutorService threadPool;
     private ServiceRegistry serviceRegistry;
 
-    public RPCServer() {
+    public SocketRpcServer() {
     }
 
-    public RPCServer(ServiceRegistry serviceRegistry){
+    public SocketRpcServer(ServiceRegistry serviceRegistry){
 
         BlockingQueue<Runnable> blockingQueue = new ArrayBlockingQueue<>(100);
 
@@ -42,7 +42,7 @@ public class RPCServer {
             Socket socket;
             while((socket = serverSocket.accept()) != null){   // 为了shutdown线程池
                 logger.info("one client connected...");
-                threadPool.execute(new WorkThread(socket, serviceRegistry));
+                threadPool.execute(new SocketServerHandler(socket, serviceRegistry));
 
             }
             threadPool.shutdown();

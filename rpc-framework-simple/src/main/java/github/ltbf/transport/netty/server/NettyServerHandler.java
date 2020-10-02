@@ -1,9 +1,10 @@
-package github.ltbf.transport.netty;
+package github.ltbf.transport.netty.server;
 
 import github.ltbf.dto.RpcRequest;
 import github.ltbf.dto.RpcResponse;
 import github.ltbf.registry.ServiceRegistry;
 import github.ltbf.registry.impl.DefaultServiceRegistry;
+import github.ltbf.transport.RpcRequestHandler;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -24,8 +25,10 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
 
     private static final Logger logger = LoggerFactory.getLogger(NettyServerHandler.class);
     private static ServiceRegistry serviceRegistry;
+    private static RpcRequestHandler rpcRequestHandler;
     static {
         serviceRegistry = new DefaultServiceRegistry();
+        rpcRequestHandler = new RpcRequestHandler();
     }
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
@@ -34,16 +37,12 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
             logger.info(String.format("server receive msg: %s", rpcRequest));
             String interfaceName = rpcRequest.getInterfaceName();
             Object service = serviceRegistry.getService(interfaceName);
-            Object result = null;
-            Method method = service.getClass().getMethod(rpcRequest.getMethodName(),rpcRequest.getParamTypes());
-            result = method.invoke(service,rpcRequest.getParameters());
+
+            Object result = rpcRequestHandler.handle(rpcRequest,service);
 
             logger.info(String.format("server get result: %s", result.toString()));
-            ChannelFuture f = ctx.writeAndFlush(RpcResponse.success(result));
+            ChannelFuture f = ctx.writeAndFlush(result);
             f.addListener(ChannelFutureListener.CLOSE);
-        }
-        catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e){
-            logger.error("occur exception on :" + e);
         }
         finally {
             ReferenceCountUtil.release(msg);

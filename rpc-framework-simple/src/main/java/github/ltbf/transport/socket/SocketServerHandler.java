@@ -4,6 +4,7 @@ import github.ltbf.dto.RpcRequest;
 import github.ltbf.dto.RpcResponse;
 import github.ltbf.enumeration.RpcResponseCode;
 import github.ltbf.registry.ServiceRegistry;
+import github.ltbf.transport.RpcRequestHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,17 +19,19 @@ import java.net.Socket;
  * @author shkstart
  * @create 2020-09-28 13:26
  */
-public class WorkThread implements Runnable {
-    private static final Logger logger = LoggerFactory.getLogger(RPCServer.class);
+public class SocketServerHandler implements Runnable {
+    private static final Logger logger = LoggerFactory.getLogger(SocketRpcServer.class);
     private Socket socket;
     private ServiceRegistry serviceRegistry;
+    private RpcRequestHandler rpcRequestHandler;
 
-    public WorkThread() {
+    public SocketServerHandler() {
     }
 
-    public WorkThread(Socket socket, ServiceRegistry serviceRegistry) {
+    public SocketServerHandler(Socket socket, ServiceRegistry serviceRegistry) {
         this.socket = socket;
         this.serviceRegistry = serviceRegistry;
+        rpcRequestHandler = new RpcRequestHandler();
     }
 
     @Override
@@ -40,31 +43,13 @@ public class WorkThread implements Runnable {
             RpcRequest rpcRequest = (RpcRequest)ois.readObject();
             String interfaceName = rpcRequest.getInterfaceName();
             Object service = serviceRegistry.getService(interfaceName);
-            Object result = handle(rpcRequest, service);
+            Object result = rpcRequestHandler.handle(rpcRequest, service);
             oos.writeObject(result);
             oos.flush();
         }
-        catch(IOException | ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException  e) {
+        catch(IOException | ClassNotFoundException  e) {
             logger.error("occur excetpin on " + e);
         }
     }
 
-    private Object handle(RpcRequest rpcRequest, Object service) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
-
-        // 未注册的服务
-        if(service == null){
-            return RpcResponse.fail(RpcResponseCode.NOT_FOUND_CLASS);
-        }
-
-        Method method = service.getClass().getMethod(rpcRequest.getMethodName(), rpcRequest.getParamTypes());
-        // 未实现的方法
-        if(method == null){
-            return RpcResponse.fail(RpcResponseCode.NOT_FOUND_METHOD);
-        }
-        // 调用方法
-        Object result = method.invoke(service, rpcRequest.getParameters());
-        logger.info("server call method[" + method.getName() + "] success...");
-
-        return RpcResponse.success(result);
-    }
 }

@@ -2,8 +2,8 @@ package github.lfbf;
 
 import github.ltbf.dao.Product;
 import github.ltbf.transport.RpcClient;
-import github.ltbf.transport.netty.NettyRpcClient;
-import github.ltbf.transport.socket.RpcClientProxy;
+import github.ltbf.transport.netty.client.NettyRpcClient;
+import github.ltbf.transport.RpcClientProxy;
 import github.ltbf.service.IProductService;
 
 /**

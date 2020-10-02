@@ -1,5 +1,7 @@
 package github.ltbf.registry.impl;
 
+import github.ltbf.enumeration.RpcErrorMessageEnum;
+import github.ltbf.exception.RpcExcepion;
 import github.ltbf.registry.ServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +18,7 @@ public class DefaultServiceRegistry implements ServiceRegistry {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultServiceRegistry.class);
 
+    // 注册的服务保存在类上
     private static final Map<String, Object> serviceMap = new ConcurrentHashMap<>();
     private static final Set<String> registeredService = ConcurrentHashMap.newKeySet();
 
@@ -29,29 +32,25 @@ public class DefaultServiceRegistry implements ServiceRegistry {
         // 返回由Java语言规范定义的基础类的规范名称
         String serviceName = service.getClass().getCanonicalName();
 
-        if(null == serviceName){
-            // 服务无法注册
-            return;
-        }
+        // 服务已注册，直接返回
         if(registeredService.contains(serviceName)){
-            // 服务已注册
             return;
         }
 
-        // 获取服务实现的所有接口
+        // 获取服务类实现的所有接口
         Class<?>[] interfaces = service.getClass().getInterfaces();
-
+        // 服务未实现任何接口
         if(interfaces.length == 0){
-            // 服务未实现任何接口
-            return;
+            throw new RpcExcepion(RpcErrorMessageEnum.SERVICE_NOT_IMMPLEMENT_ANY_INTERFACE);
         }
+        // 注册服务
         for (Class<?> anInterface : interfaces) {
             serviceMap.put(anInterface.getCanonicalName(), service);
         }
 
         // 记录服务注册
         registeredService.add(serviceName);
-
+        logger.info("Add service:{} and interfaces:{}", serviceName, service.getClass().getInterfaces());
     }
 
     /**
@@ -61,12 +60,11 @@ public class DefaultServiceRegistry implements ServiceRegistry {
     public synchronized Object getService(String interfaceName) {
 
         Object service = serviceMap.get(interfaceName);
+        // 未注册服务
         if(null == service){
-            // 未注册该接口的实现服务
-
+            throw new RpcExcepion(RpcErrorMessageEnum.SERVICE_NOT_FOUND);
         }
 
         return service;
-
     }
 }

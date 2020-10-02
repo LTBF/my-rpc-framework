@@ -1,4 +1,4 @@
-package github.ltbf.transport.netty;
+package github.ltbf.transport.netty.codec;
 
 import github.ltbf.serialize.Serializer;
 import io.netty.buffer.ByteBuf;

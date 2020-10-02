@@ -1,7 +1,6 @@
-package github.ltbf.transport.socket;
+package github.ltbf.transport;
 
 import github.ltbf.dto.RpcRequest;
-import github.ltbf.transport.RpcClient;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

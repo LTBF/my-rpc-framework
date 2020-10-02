@@ -3,21 +3,18 @@ package github.ltbf.serialize.kryo;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-import com.sun.xml.internal.messaging.saaj.util.ByteInputStream;
-import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 import github.ltbf.dto.RpcRequest;
 import github.ltbf.dto.RpcResponse;
 import github.ltbf.serialize.Serializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
 /**
  * @author shkstart
  * @create 2020-10-02 10:20
- * Kryo实现序列化
+ * Kryo实现序列化(待序列化的对象一定要有无参构造)
  */
 public class KryoSerializer implements Serializer {
 
@@ -25,7 +22,7 @@ public class KryoSerializer implements Serializer {
 
     /**
      * Kryo是非线程安全的，所以每个线程必须都要有自己的Kryo对象
-     * 下列代码，当每个线程访问时，ThreadLocal都会为线程创建一份变量
+     * 下列代码，当每个线程访问时，ThreadLocal都会为线程创建一份变量（kryo对象）
      */
     private final ThreadLocal<Kryo> kryoThreadLocal = ThreadLocal.withInitial(() -> {
         Kryo kryo = new Kryo();
@@ -38,6 +35,11 @@ public class KryoSerializer implements Serializer {
     });
 
 
+    /**
+     * Kryo序列化：对象--->byte[]
+     * @param object
+     * @return
+     */
     @Override
     public byte[] serialize(Object object) {
 
@@ -58,6 +60,13 @@ public class KryoSerializer implements Serializer {
 
     }
 
+    /**
+     * Kryo: byte[] --> Object
+     * @param bytes
+     * @param clazz
+     * @param <T>
+     * @return
+     */
     @Override
     public <T> T deserialize(byte[] bytes, Class<T> clazz) {
 
