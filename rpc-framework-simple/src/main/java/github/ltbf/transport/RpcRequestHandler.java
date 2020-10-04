@@ -22,7 +22,7 @@ public class RpcRequestHandler {
     public Object handle(RpcRequest rpcRequest, Object service){
 
         if(service == null){
-            return RpcResponse.fail(RpcResponseCode.NOT_FOUND_CLASS);
+            return RpcResponse.fail(RpcResponseCode.NOT_FOUND_CLASS, rpcRequest.getRequestId());
         }
 
         Object result = null;
@@ -30,11 +30,11 @@ public class RpcRequestHandler {
             Method method = service.getClass().getMethod(rpcRequest.getMethodName(),
                     rpcRequest.getParamTypes());
             result = method.invoke(service, rpcRequest.getParameters());
-            result = RpcResponse.success(result);
+            result = RpcResponse.success(result, rpcRequest.getRequestId());
         }
         catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e){
             logger.error("occur exception on:" + e);
-            result = RpcResponse.fail(RpcResponseCode.FAIL);
+            result = RpcResponse.fail(RpcResponseCode.FAIL, rpcRequest.getRequestId());
         }
 
         return result;

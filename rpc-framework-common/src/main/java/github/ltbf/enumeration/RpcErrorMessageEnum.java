@@ -15,6 +15,7 @@ import lombok.Getter;
 public enum RpcErrorMessageEnum {
     SERVICE_INVOCATION_FAILURE("服务调用失败"),
     SERVICE_NOT_FOUND("没有找到指定服务"),
-    SERVICE_NOT_IMMPLEMENT_ANY_INTERFACE("服务未实现任何接口");
+    SERVICE_NOT_IMMPLEMENT_ANY_INTERFACE("服务未实现任何接口"),
+    REQUEST_NOT_MATCH_RESPONSE("请求和结果不匹配");
     private String message;
 }

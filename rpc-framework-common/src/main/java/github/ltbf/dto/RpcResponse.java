@@ -18,6 +18,8 @@ public class RpcResponse<T> implements Serializable {
 
     private static final long serialVersionUID = -6489912619852961642L;
 
+    private String requestId;
+
     /**
      * 响应码
      * */
@@ -33,13 +35,13 @@ public class RpcResponse<T> implements Serializable {
      * */
     private T data;
 
-    public static <T> RpcResponse<T> success(T data){
-        return new RpcResponse<T>(RpcResponseCode.SUCCESS.getCode(),
+    public static <T> RpcResponse<T> success(T data, String requestId){
+        return new RpcResponse<T>(requestId, RpcResponseCode.SUCCESS.getCode(),
                 RpcResponseCode.SUCCESS.getMessage(), data);
     }
 
-    public static <T> RpcResponse<T> fail(RpcResponseCode rpcResponseCode){
-        return new RpcResponse<T>(rpcResponseCode.getCode(),
+    public static <T> RpcResponse<T> fail(RpcResponseCode rpcResponseCode, String requestId){
+        return new RpcResponse<T>(requestId, rpcResponseCode.getCode(),
                 rpcResponseCode.getMessage(), null);
     }
 

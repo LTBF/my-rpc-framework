@@ -2,7 +2,7 @@ package github.ltbf;
 
 import github.ltbf.registry.ServiceRegistry;
 import github.ltbf.registry.impl.DefaultServiceRegistry;
-import github.ltbf.transport.netty.server.NettyRpcServer;
+import github.ltbf.transport.netty.server.NettyServerTransport;
 import github.ltbf.service.IProductService;
 import github.ltbf.service.IUserService;
 import github.ltbf.service.impl.ProductServiceImpl;
@@ -26,7 +26,7 @@ public class ServerClient {
         serviceRegistry.register(productService);
 
         // 开启服务
-        NettyRpcServer server = new NettyRpcServer(8888);
+        NettyServerTransport server = new NettyServerTransport(8888);
         server.start();
 
     }

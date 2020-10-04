@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.UUID;
 
 /**
  * @author shkstart
@@ -17,7 +18,7 @@ import java.lang.reflect.Proxy;
 public class RpcClientProxy implements InvocationHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(RpcClientProxy.class);
-    private RpcClient rpcClient;
+    private ClientTransport rpcClient;
 
 
     public <T>T getProxy(Class<T> clazz){
@@ -30,7 +31,8 @@ public class RpcClientProxy implements InvocationHandler {
         RpcRequest rpcRequest = RpcRequest.builder().methodName(method.getName())
                 .interfaceName(method.getDeclaringClass().getName())   // 根据方法获取类名
                 .paramTypes(method.getParameterTypes())
-                .parameters(args).build();
+                .parameters(args)
+                .requestId(UUID.randomUUID().toString()).build();
         logger.info("client invoke method ing...");
 
         return rpcClient.sendRpcRequest(rpcRequest);

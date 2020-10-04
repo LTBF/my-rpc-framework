@@ -18,6 +18,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class RpcRequest implements Serializable {
     private static final long serialVersionUID = 5937933279954325740L;
+    private String requestId;
     private String interfaceName;
     private String methodName;
     private Object[] parameters;

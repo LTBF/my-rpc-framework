@@ -22,32 +22,37 @@ import org.slf4j.LoggerFactory;
  * @author shkstart
  * @create 2020-10-02 16:06
  */
-public class NettyRpcServer {
+public class NettyServerTransport {
 
-    private static final Logger logger = LoggerFactory.getLogger(NettyRpcServer.class);
+    private static final Logger logger = LoggerFactory.getLogger(NettyServerTransport.class);
 
     private int port;
     private KryoSerializer kryoSerializer;
 
-    public NettyRpcServer(int port){
+    public NettyServerTransport(int port){
         this.port = port;
         kryoSerializer = new KryoSerializer();
     }
 
     public void start(){
+        // 负责接受连接请求的线程组
         EventLoopGroup bossGroup = new NioEventLoopGroup();
+        // 负责处理连接IO的线程组
         EventLoopGroup workerGroup = new NioEventLoopGroup();
 
         try{
+            // 配置引导类
             ServerBootstrap serverBootstrap = new ServerBootstrap();
-            serverBootstrap.group(bossGroup, workerGroup)
-                    .channel(NioServerSocketChannel.class)
-                    .handler(new LoggingHandler(LogLevel.INFO))
-                    .childHandler(new ChannelInitializer<SocketChannel>() {
+            serverBootstrap.group(bossGroup, workerGroup)    // 绑定线程组
+                    .channel(NioServerSocketChannel.class)    // 指定通道类型，反射
+                    .handler(new LoggingHandler(LogLevel.INFO))   // ？？？
+                    .childHandler(new ChannelInitializer<SocketChannel>() {    // 数据读写操作
                         @Override
                         protected void initChannel(SocketChannel ch) {
+                            // 编解码器
                             ch.pipeline().addLast(new NettyKryoDecoder(kryoSerializer, RpcRequest.class));
                             ch.pipeline().addLast(new NettyKryoEncoder(kryoSerializer, RpcResponse.class));
+                            // 数据处理
                             ch.pipeline().addLast(new NettyServerHandler());
                         }
                     })
@@ -56,14 +61,17 @@ public class NettyRpcServer {
                     .option(ChannelOption.SO_BACKLOG, 128)
                     .option(ChannelOption.SO_KEEPALIVE, true)
                     .option(ChannelOption.SO_KEEPALIVE, true);
-            // 绑定端口，同步等待绑定成功
+
+            // 异步绑定端口
             ChannelFuture f = serverBootstrap.bind(port).sync();
-            // 等待服务端监听端口关闭
+            // 异步监听通道关闭
             f.channel().closeFuture().sync();
 
         } catch (InterruptedException e) {
+            e.printStackTrace();
             logger.error("occur exception when start server:", e);
         } finally {
+            // 优雅的关闭线程组
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
         }

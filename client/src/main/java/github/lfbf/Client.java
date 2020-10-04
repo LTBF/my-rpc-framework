@@ -1,10 +1,12 @@
 package github.lfbf;
 
 import github.ltbf.dao.Product;
-import github.ltbf.transport.RpcClient;
-import github.ltbf.transport.netty.client.NettyRpcClient;
+import github.ltbf.transport.ClientTransport;
+import github.ltbf.transport.netty.client.NettyClientTransport;
 import github.ltbf.transport.RpcClientProxy;
 import github.ltbf.service.IProductService;
+
+import java.net.InetSocketAddress;
 
 /**
  * @author shkstart
@@ -14,13 +16,9 @@ public class Client {
 
     public static void main(String[] args) {
 
-        RpcClient rpcClient = new NettyRpcClient("127.0.0.1", 8888);
+        InetSocketAddress inetSocketAddress = new InetSocketAddress("127.0.0.1", 8888);
+        ClientTransport rpcClient = new NettyClientTransport(inetSocketAddress);
         RpcClientProxy rpcClientProxy = new RpcClientProxy(rpcClient);
-        /*
-        IUserService userService = rpcClientProxy.getProxy(IUserService.class);
-        User user = userService.findById(111);
-        System.out.println(user);
-        */
         IProductService productService = rpcClientProxy.getProxy(IProductService.class);
         Product product = productService.selectNumById(1010);
         System.out.println(product);

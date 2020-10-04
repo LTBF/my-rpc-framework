@@ -3,7 +3,7 @@ package github.ltbf.transport.socket;
 import github.ltbf.dto.RpcRequest;
 import github.ltbf.dto.RpcResponse;
 import github.ltbf.enumeration.RpcResponseCode;
-import github.ltbf.transport.RpcClient;
+import github.ltbf.transport.ClientTransport;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +18,7 @@ import java.net.Socket;
  * @create 2020-09-29 14:38
  */
 @AllArgsConstructor
-public class SocketRpcClient implements RpcClient {
+public class SocketRpcClient implements ClientTransport {
 
     public static final Logger logger = LoggerFactory.getLogger(SocketRpcClient.class);
 
