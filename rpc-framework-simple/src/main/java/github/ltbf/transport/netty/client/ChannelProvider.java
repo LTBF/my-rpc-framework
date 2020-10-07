@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
  * @author shkstart
  * @create 2020-10-04 16:28
  * 获取一个连接Channel
- * 无法处理并发请求
+ * 无法处理并发请求*****
  */
 public class ChannelProvider {
 
