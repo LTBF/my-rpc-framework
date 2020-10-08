@@ -1,5 +1,6 @@
 package github.ltbf.transport.socket;
 
+import github.ltbf.provider.ServiceProvider;
 import github.ltbf.registry.ServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,18 +19,18 @@ public class SocketRpcServer {
 
     private static final Logger logger = LoggerFactory.getLogger(SocketRpcServer.class);
     private ExecutorService threadPool;
-    private ServiceRegistry serviceRegistry;
+    private ServiceProvider serviceProvider;
 
     public SocketRpcServer() {
     }
 
-    public SocketRpcServer(ServiceRegistry serviceRegistry){
+    public SocketRpcServer(ServiceProvider serviceProvider){
 
         BlockingQueue<Runnable> blockingQueue = new ArrayBlockingQueue<>(100);
 
         this.threadPool = new ThreadPoolExecutor(10, 100, 1,
                 TimeUnit.MINUTES, blockingQueue);
-        this.serviceRegistry = serviceRegistry;
+        this.serviceProvider = serviceProvider;
     }
 
     /**
@@ -42,7 +43,7 @@ public class SocketRpcServer {
             Socket socket;
             while((socket = serverSocket.accept()) != null){   // 为了shutdown线程池
                 logger.info("one client connected...");
-                threadPool.execute(new SocketServerHandler(socket, serviceRegistry));
+                threadPool.execute(new SocketServerHandler(socket, serviceProvider));
 
             }
             threadPool.shutdown();

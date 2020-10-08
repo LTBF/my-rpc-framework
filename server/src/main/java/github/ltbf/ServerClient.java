@@ -1,7 +1,7 @@
 package github.ltbf;
 
 import github.ltbf.registry.ServiceRegistry;
-import github.ltbf.registry.impl.DefaultServiceRegistry;
+import github.ltbf.registry.impl.ServiceRegistryImpl;
 import github.ltbf.transport.netty.server.NettyServerTransport;
 import github.ltbf.service.IProductService;
 import github.ltbf.service.IUserService;
@@ -21,12 +21,11 @@ public class ServerClient {
         //todo Map记录服务，实现多服务，包扫描
         IUserService userService = new UserServiceImpl();
         IProductService productService = new ProductServiceImpl();
-        ServiceRegistry serviceRegistry = new DefaultServiceRegistry();
-        serviceRegistry.register(userService);
-        serviceRegistry.register(productService);
+        NettyServerTransport server = new NettyServerTransport("127.0.0.1",8888);
+        server.publicService(userService);
+        server.publicService(productService);
 
         // 开启服务
-        NettyServerTransport server = new NettyServerTransport(8888);
         server.start();
 
     }

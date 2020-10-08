@@ -1,9 +1,10 @@
 package github.ltbf.transport.netty.server;
 
 import github.ltbf.dto.RpcRequest;
-import github.ltbf.dto.RpcResponse;
+import github.ltbf.provider.ServiceProvider;
+import github.ltbf.provider.impl.ServiceProviderImpl;
 import github.ltbf.registry.ServiceRegistry;
-import github.ltbf.registry.impl.DefaultServiceRegistry;
+import github.ltbf.registry.impl.ServiceRegistryImpl;
 import github.ltbf.transport.RpcRequestHandler;
 import github.ltbf.util.concurrent.ThreadPoolFactory;
 import io.netty.channel.ChannelFuture;
@@ -14,8 +15,6 @@ import io.netty.util.ReferenceCountUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.concurrent.ExecutorService;
 
 
@@ -26,12 +25,12 @@ import java.util.concurrent.ExecutorService;
 public class NettyServerHandler extends ChannelInboundHandlerAdapter {
 
     private static final Logger logger = LoggerFactory.getLogger(NettyServerHandler.class);
-    private static ServiceRegistry serviceRegistry;
+    private static ServiceProvider serviceProvider;
     private static RpcRequestHandler rpcRequestHandler;
     private static ExecutorService threadPool;
 
     static {
-        serviceRegistry = new DefaultServiceRegistry();
+        serviceProvider = new ServiceProviderImpl();
         rpcRequestHandler = new RpcRequestHandler();
         threadPool = ThreadPoolFactory.createDefaultThreadPool("netty-server-handler-rpc-pool");
     }
@@ -44,7 +43,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
                 RpcRequest rpcRequest = (RpcRequest) msg;
                 logger.info(String.format("server receive msg: %s", rpcRequest));
                 String interfaceName = rpcRequest.getInterfaceName();
-                Object service = serviceRegistry.getService(interfaceName);
+                Object service = serviceProvider.getServiceProvider(interfaceName);
                 Object result = rpcRequestHandler.handle(rpcRequest,service);
                 logger.info(String.format("server get result: %s", result.toString()));
                 ChannelFuture f = ctx.writeAndFlush(result);

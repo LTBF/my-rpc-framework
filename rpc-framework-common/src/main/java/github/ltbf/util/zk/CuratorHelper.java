@@ -1,6 +1,5 @@
 package github.ltbf.util.zk;
 
-import github.ltbf.exception.SerializeException;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
@@ -39,9 +38,9 @@ public class CuratorHelper {
     // 会话超时时间
     private static final int SESSION_TIMEOUT = 60 * 1000;
     // 根节点
-    private static final String ZK_REGISTER_ROOT_PATH = "/my_rpc_2";
+    public static final String ZK_REGISTER_ROOT_PATH = "/my_rpc_2";
     // 用于缓存zookeeper所提供的服务，ConcurrentHashMap线程安全
-    private static final Map<String, List<String>> serviceAdressMap = new ConcurrentHashMap<>();
+    private static final Map<String, List<String>> serviceAddressMap = new ConcurrentHashMap<>();
 
 
     /**
@@ -79,13 +78,13 @@ public class CuratorHelper {
     }
 
     /**
-     * 查找指定服务节点下的子节点
+     * 查找指定服务节点下的子节点，获取后就要监听，主要是客户端使用
      */
     public static List<String> getChildrenNodes(CuratorFramework zkClient, String serviceName){
 
         // 先看一下本机缓存中是否有，有的话，直接返回
-        if(serviceAdressMap.containsKey(serviceName)){
-            return serviceAdressMap.get(serviceName);
+        if(serviceAddressMap.containsKey(serviceName)){
+            return serviceAddressMap.get(serviceName);
         }
 
         // 没有的话，向zookeeper查询
@@ -95,7 +94,7 @@ public class CuratorHelper {
             // 获得子节点
             zkClient.getChildren().forPath(servicePath);
             // 加入本地缓存
-            serviceAdressMap.put(serviceName, result);
+            serviceAddressMap.put(serviceName, result);
             // 既然在本地缓存了，那么当zookeeper发生变化时，要更新对应本地缓存，所以加入监听机制
 
 
@@ -127,7 +126,7 @@ public class CuratorHelper {
                 // 重新获取zookeeper服务的节点信息
                 List<String> serviceAdress = curatorFramework.getChildren().forPath(servicePath);
                 // 放入本地缓存
-                serviceAdressMap.put(serviceName, serviceAdress);
+                serviceAddressMap.put(serviceName, serviceAdress);
             }
         };
         // 绑定
