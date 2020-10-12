@@ -92,7 +92,7 @@ public class CuratorHelper {
         String servicePath = CuratorHelper.ZK_REGISTER_ROOT_PATH + "/" + serviceName;
         try{
             // 获得子节点
-            zkClient.getChildren().forPath(servicePath);
+            result = zkClient.getChildren().forPath(servicePath);
             // 加入本地缓存
             serviceAddressMap.put(serviceName, result);
             // 既然在本地缓存了，那么当zookeeper发生变化时，要更新对应本地缓存，所以加入监听机制

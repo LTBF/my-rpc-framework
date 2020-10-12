@@ -1,6 +1,8 @@
 package github.lfbf;
 
 import github.ltbf.dao.Product;
+import github.ltbf.registry.ServiceDiscovery;
+import github.ltbf.registry.impl.ZkServiceDiscovery;
 import github.ltbf.transport.ClientTransport;
 import github.ltbf.transport.netty.client.NettyClientTransport;
 import github.ltbf.transport.RpcClientProxy;
@@ -16,11 +18,17 @@ public class Client {
 
     public static void main(String[] args) {
 
-        InetSocketAddress inetSocketAddress = new InetSocketAddress("127.0.0.1", 8888);
-        ClientTransport rpcClient = new NettyClientTransport(inetSocketAddress);
+        // 服务发现类
+        ServiceDiscovery serviceDiscovery = new ZkServiceDiscovery();
+        // 数据传输方式：Socket / Netty
+        ClientTransport rpcClient = new NettyClientTransport(serviceDiscovery);
+        // 代理对象Handler类
         RpcClientProxy rpcClientProxy = new RpcClientProxy(rpcClient);
+        // 代理对象
         IProductService productService = rpcClientProxy.getProxy(IProductService.class);
+        // 调用代理对象方法
         Product product = productService.selectNumById(1010);
+
         System.out.println(product);
     }
 }

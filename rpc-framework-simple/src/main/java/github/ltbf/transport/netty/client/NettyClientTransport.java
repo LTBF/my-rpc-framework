@@ -2,6 +2,7 @@ package github.ltbf.transport.netty.client;
 
 import github.ltbf.dto.RpcRequest;
 import github.ltbf.dto.RpcResponse;
+import github.ltbf.registry.ServiceDiscovery;
 import github.ltbf.serialize.Serializer;
 import github.ltbf.serialize.kryo.KryoSerializer;
 import github.ltbf.transport.ClientTransport;
@@ -20,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.security.auth.callback.CallbackHandler;
 import java.net.InetSocketAddress;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author shkstart
@@ -29,9 +31,8 @@ import java.net.InetSocketAddress;
 public class NettyClientTransport implements ClientTransport {
 
     private static final Logger logger = LoggerFactory.getLogger(NettyClientTransport.class);
-    private InetSocketAddress inetSocketAddress;
 
-
+    private ServiceDiscovery serviceDiscovery;
 
     /**
      * 发送消息
@@ -39,7 +40,12 @@ public class NettyClientTransport implements ClientTransport {
     @Override
     public Object sendRpcRequest(RpcRequest rpcRequest) {
 
+        // 原子引用
+        AtomicReference<Object> result = new AtomicReference<>();
+
         try{
+            //服务发现
+            InetSocketAddress inetSocketAddress = serviceDiscovery.lookupService(rpcRequest.getInterfaceName());
             // 连接到服务端，并返回通道
             Channel channel = ChannelProvider.get(inetSocketAddress);
             if(null != channel){
@@ -59,13 +65,13 @@ public class NettyClientTransport implements ClientTransport {
 
                 // 校验RpcRequest和RpcResponse
                 RpcMessageChecker.check(rpcResponse, rpcRequest);
-                return rpcResponse.getData();
+                result.set(rpcResponse.getData());
             }
 
         }
         catch (InterruptedException e){
             logger.error("occur exception on:" + e);
         }
-        return null;
+        return result.get();
     }
 }
