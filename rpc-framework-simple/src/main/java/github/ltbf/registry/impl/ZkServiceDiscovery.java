@@ -2,6 +2,7 @@ package github.ltbf.registry.impl;
 
 import github.ltbf.registry.ServiceDiscovery;
 import github.ltbf.util.zk.CuratorHelper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,9 +14,8 @@ import java.net.InetSocketAddress;
  * @author shkstart
  * @create 2020-10-12 16:41
  */
+@Slf4j
 public class ZkServiceDiscovery implements ServiceDiscovery {
-
-    private static final Logger logger = LoggerFactory.getLogger(ZkServiceDiscovery.class);
 
     private final CuratorFramework zkClient;
 
@@ -34,7 +34,7 @@ public class ZkServiceDiscovery implements ServiceDiscovery {
     public InetSocketAddress lookupService(String serviceName) {
 
         String serviceAddress = CuratorHelper.getChildrenNodes(zkClient, serviceName).get(0);
-        logger.info("成功找到服务地址：", serviceAddress);
+        log.info("成功找到服务地址：", serviceAddress);
         String[] strs = serviceAddress.split(":");
         return new InetSocketAddress(strs[0], Integer.valueOf(strs[1]));
     }

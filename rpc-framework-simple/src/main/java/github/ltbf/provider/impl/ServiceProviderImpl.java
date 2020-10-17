@@ -3,6 +3,7 @@ package github.ltbf.provider.impl;
 import github.ltbf.enumeration.RpcErrorMessageEnum;
 import github.ltbf.exception.RpcExcepion;
 import github.ltbf.provider.ServiceProvider;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,9 +16,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * @create 2020-10-08 18:42
  * 服务提供者的实现类，负责维护本机所提供的服务，包括服务添加，以及查找
  */
+@Slf4j
 public class ServiceProviderImpl implements ServiceProvider {
-
-    private static final Logger logger = LoggerFactory.getLogger(ServiceProviderImpl.class);
 
     // 一个Map对象，key是接口名, value是其对应的service[服务]，线程安全
     private static final Map<String, Object> serviceMap = new ConcurrentHashMap<>();
@@ -53,7 +53,7 @@ public class ServiceProviderImpl implements ServiceProvider {
         // 将该服务提供者放入Set记录
         serviceSet.add(serviceProviderName);
 
-        logger.info("添加服务提供者{}成功,其实现接口：{}", serviceProviderName, interfaces);
+        log.info("添加服务提供者{}成功,其实现接口：{}", serviceProviderName, interfaces);
 
     }
 

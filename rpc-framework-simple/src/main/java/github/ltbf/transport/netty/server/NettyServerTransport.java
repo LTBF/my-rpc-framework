@@ -19,6 +19,7 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,9 +30,9 @@ import java.net.InetSocketAddress;
  * @author shkstart
  * @create 2020-10-02 16:06
  */
+@Slf4j
 public class NettyServerTransport {
 
-    private static final Logger logger = LoggerFactory.getLogger(NettyServerTransport.class);
     // 服务地址
     private String host;
     // 服务端口
@@ -99,7 +100,7 @@ public class NettyServerTransport {
 
         } catch (InterruptedException e) {
             e.printStackTrace();
-            logger.error("occur exception when start server:", e);
+            log.error("occur exception when start server:", e);
         } finally {
             // 优雅的关闭线程组
             bossGroup.shutdownGracefully();

@@ -1,7 +1,7 @@
 package github.ltbf.transport.socket;
 
 import github.ltbf.provider.ServiceProvider;
-import github.ltbf.registry.ServiceRegistry;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,9 +15,9 @@ import java.util.concurrent.*;
  * @create 2020-09-28 11:58
  */
 
+@Slf4j
 public class SocketRpcServer {
 
-    private static final Logger logger = LoggerFactory.getLogger(SocketRpcServer.class);
     private ExecutorService threadPool;
     private ServiceProvider serviceProvider;
 
@@ -39,17 +39,17 @@ public class SocketRpcServer {
     public void start(int port){
 
         try(ServerSocket serverSocket = new ServerSocket(port)){
-            logger.info("server started...");
+            log.info("server started...");
             Socket socket;
             while((socket = serverSocket.accept()) != null){   // 为了shutdown线程池
-                logger.info("one client connected...");
+                log.info("one client connected...");
                 threadPool.execute(new SocketServerHandler(socket, serviceProvider));
 
             }
             threadPool.shutdown();
         }
         catch(IOException e){
-            logger.error("occur IOException:" + e);
+            log.error("occur IOException:" + e);
         }
     }
 

@@ -1,5 +1,6 @@
 package github.ltbf.util.zk;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
@@ -24,9 +25,9 @@ import java.util.concurrent.ConcurrentHashMap;
  *  - 创建节点
  *  - 查询节点
  */
+@Slf4j
 public class CuratorHelper {
 
-    private static final Logger logger = LoggerFactory.getLogger(CuratorHelper.class);
     // 连接重试间隔
     private static final int SLEEP_MS_BETWEEN_RETRIES = 100;
     // 最大重试次数
@@ -73,7 +74,7 @@ public class CuratorHelper {
             zkClient.create().creatingParentsIfNeeded().withMode(CreateMode.EPHEMERAL).forPath(path);
         } catch (Exception e) {
             //e.printStackTrace();
-            logger.error("occur exception on :" + e);
+            log.error("occur exception on :" + e);
         }
     }
 
@@ -100,7 +101,7 @@ public class CuratorHelper {
 
         } catch (Exception e) {
             //e.printStackTrace();
-            logger.error("occur exception on :" + e);
+            log.error("occur exception on :" + e);
         }
 
         return result;
@@ -138,7 +139,7 @@ public class CuratorHelper {
             pathChildrenCache.start();
         } catch (Exception e) {
             // e.printStackTrace();
-            logger.error("occur exception on:" + e);
+            log.error("occur exception on:" + e);
         }
     }
 

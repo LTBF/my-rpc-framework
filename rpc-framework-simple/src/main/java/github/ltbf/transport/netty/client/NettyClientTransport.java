@@ -16,6 +16,7 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.AttributeKey;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,9 +29,8 @@ import java.util.concurrent.atomic.AtomicReference;
  * @create 2020-10-02 13:14
  */
 @AllArgsConstructor
+@Slf4j
 public class NettyClientTransport implements ClientTransport {
-
-    private static final Logger logger = LoggerFactory.getLogger(NettyClientTransport.class);
 
     private ServiceDiscovery serviceDiscovery;
 
@@ -51,10 +51,10 @@ public class NettyClientTransport implements ClientTransport {
             if(null != channel){
                 channel.writeAndFlush(rpcRequest).addListener(future -> {
                     if(future.isSuccess()){
-                       logger.info("客户端发送请求成功：%s", rpcRequest.toString());
+                       log.info("客户端发送请求成功：%s", rpcRequest.toString());
                    }
                    else{
-                       logger.info("客户端发送请求失败:" + future.cause());
+                       log.info("客户端发送请求失败:" + future.cause());
                    }
                 });
 
@@ -70,7 +70,7 @@ public class NettyClientTransport implements ClientTransport {
 
         }
         catch (InterruptedException e){
-            logger.error("occur exception on:" + e);
+            log.error("occur exception on:" + e);
         }
         return result.get();
     }

@@ -2,6 +2,7 @@ package github.ltbf.transport;
 
 import github.ltbf.dto.RpcRequest;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,9 +16,9 @@ import java.util.UUID;
  * @create 2020-09-28 15:47
  */
 @AllArgsConstructor
+@Slf4j
 public class RpcClientProxy implements InvocationHandler {
 
-    private static final Logger logger = LoggerFactory.getLogger(RpcClientProxy.class);
     private ClientTransport rpcClient;
 
 
@@ -33,7 +34,7 @@ public class RpcClientProxy implements InvocationHandler {
                 .paramTypes(method.getParameterTypes())
                 .parameters(args)
                 .requestId(UUID.randomUUID().toString()).build();
-        logger.info("client invoke method ing...");
+        log.info("client invoke method ing...");
 
         return rpcClient.sendRpcRequest(rpcRequest);
     }

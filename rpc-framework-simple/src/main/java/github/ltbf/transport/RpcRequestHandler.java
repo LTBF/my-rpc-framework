@@ -3,11 +3,10 @@ package github.ltbf.transport;
 import github.ltbf.dto.RpcRequest;
 import github.ltbf.dto.RpcResponse;
 import github.ltbf.enumeration.RpcResponseCode;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.ws.Response;
-import java.awt.geom.QuadCurve2D;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -15,9 +14,8 @@ import java.lang.reflect.Method;
  * @author shkstart
  * @create 2020-10-02 20:36
  */
+@Slf4j
 public class RpcRequestHandler {
-
-    private static final Logger logger = LoggerFactory.getLogger(RpcRequestHandler.class);
 
     public Object handle(RpcRequest rpcRequest, Object service){
 
@@ -33,7 +31,7 @@ public class RpcRequestHandler {
             result = RpcResponse.success(result, rpcRequest.getRequestId());
         }
         catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e){
-            logger.error("occur exception on:" + e);
+            log.error("occur exception on:" + e);
             result = RpcResponse.fail(RpcResponseCode.FAIL, rpcRequest.getRequestId());
         }
 

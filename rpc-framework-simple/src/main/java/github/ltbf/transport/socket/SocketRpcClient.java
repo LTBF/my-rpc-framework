@@ -5,6 +5,7 @@ import github.ltbf.dto.RpcResponse;
 import github.ltbf.enumeration.RpcResponseCode;
 import github.ltbf.transport.ClientTransport;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,9 +19,8 @@ import java.net.Socket;
  * @create 2020-09-29 14:38
  */
 @AllArgsConstructor
+@Slf4j
 public class SocketRpcClient implements ClientTransport {
-
-    public static final Logger logger = LoggerFactory.getLogger(SocketRpcClient.class);
 
     private String host;
     private int port;
@@ -33,11 +33,11 @@ public class SocketRpcClient implements ClientTransport {
             ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
             RpcResponse rpcResponse = (RpcResponse)ois.readObject();
             if(rpcResponse == null){
-                logger.error("调用服务失败,serviceName:" + rpcRequest.getInterfaceName());
+                log.error("调用服务失败,serviceName:" + rpcRequest.getInterfaceName());
                 // throw excepiton
             }
             if(rpcResponse.getCode() == null || !rpcResponse.getCode().equals(RpcResponseCode.SUCCESS.getCode())){
-                logger.error("调用服务失败,serviceName:" + rpcRequest.getInterfaceName());
+                log.error("调用服务失败,serviceName:" + rpcRequest.getInterfaceName());
                 // throw excepiton
             }
 

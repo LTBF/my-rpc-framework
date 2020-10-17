@@ -6,6 +6,7 @@ import com.esotericsoftware.kryo.io.Output;
 import github.ltbf.dto.RpcRequest;
 import github.ltbf.dto.RpcResponse;
 import github.ltbf.serialize.Serializer;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.ByteArrayInputStream;
@@ -16,9 +17,8 @@ import java.io.ByteArrayOutputStream;
  * @create 2020-10-02 10:20
  * Kryo实现序列化(待序列化的对象一定要有无参构造)
  */
+@Slf4j
 public class KryoSerializer implements Serializer {
-
-    private static final Logger logger = LoggerFactory.getLogger(KryoSerializer.class);
 
     /**
      * Kryo是非线程安全的，所以每个线程必须都要有自己的Kryo对象
@@ -53,7 +53,7 @@ public class KryoSerializer implements Serializer {
             return output.toBytes();
         }
         catch(Exception e){
-            logger.error("occur exception when serialize:" + e);
+            log.error("occur exception when serialize:" + e);
             // 序列化失败异常
             throw new RuntimeException("序列化失败");
         }
@@ -79,7 +79,7 @@ public class KryoSerializer implements Serializer {
             return t;
         }
         catch(Exception e){
-            logger.error("occur exception when deserialize:" + e);
+            log.error("occur exception when deserialize:" + e);
             // 序列化失败异常
             throw new RuntimeException("序列化失败");
         }

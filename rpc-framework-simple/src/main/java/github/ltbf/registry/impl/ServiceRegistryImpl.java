@@ -1,28 +1,22 @@
 package github.ltbf.registry.impl;
 
-import github.ltbf.enumeration.RpcErrorMessageEnum;
-import github.ltbf.exception.RpcExcepion;
-import github.ltbf.provider.impl.ServiceProviderImpl;
 import github.ltbf.registry.ServiceRegistry;
 import github.ltbf.util.zk.CuratorHelper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * zookeeper注册中心，服务注册以及查找
  * @author shkstart
  * @create 2020-09-30 15:23
  */
+@Slf4j
 public class ServiceRegistryImpl implements ServiceRegistry {
-
-    private static final Logger logger = LoggerFactory.getLogger(ServiceRegistryImpl.class);
 
     private CuratorFramework zkClient;
 
@@ -56,7 +50,7 @@ public class ServiceRegistryImpl implements ServiceRegistry {
             CuratorHelper.createEphemeraNode(zkClient, servicePath);
         }
 
-        logger.info("注册中心服务{}注册成功，其注册的服务：{}" , serviceProviderName, interfaces);
+        log.info("注册中心服务{}注册成功，其注册的服务：{}" , serviceProviderName, interfaces);
 
     }
 
@@ -75,7 +69,7 @@ public class ServiceRegistryImpl implements ServiceRegistry {
         }
 
         String serviceAddress = childrenNodes.get(0);
-        logger.info("注册中心查找{}服务成功：" + serviceAddress);
+        log.info("注册中心查找{}服务成功：" + serviceAddress);
 
         String[] strs = serviceAddress.split(":");
         return new InetSocketAddress(strs[0], new Integer(strs[1]));

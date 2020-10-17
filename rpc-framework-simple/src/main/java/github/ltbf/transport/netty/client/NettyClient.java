@@ -14,6 +14,7 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,9 +23,9 @@ import org.slf4j.LoggerFactory;
  * @create 2020-10-04 16:14
  * Netty客户端初始化配置类
  */
+@Slf4j
 public class NettyClient {
 
-    private static final Logger logger = LoggerFactory.getLogger(NettyClient.class);
     private static Bootstrap bootstrap;
     private static EventLoopGroup eventLoopGroup;
 
@@ -64,7 +65,7 @@ public class NettyClient {
      * 关闭Netty客户端
      */
     public static void close(){
-        logger.info("shutdown the Netty Client");
+        log.info("shutdown the Netty Client");
         eventLoopGroup.shutdownGracefully();
     }
 

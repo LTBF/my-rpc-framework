@@ -1,12 +1,11 @@
 package github.ltbf.transport.netty.client;
 
 import github.ltbf.dto.RpcResponse;
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.channel.socket.SocketChannel;
 import io.netty.util.AttributeKey;
 import io.netty.util.ReferenceCountUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,9 +13,8 @@ import org.slf4j.LoggerFactory;
  * @author shkstart
  * @create 2020-10-02 15:55
  */
+@Slf4j
 public class NettyClientHandler extends ChannelInboundHandlerAdapter {
-    private static final Logger logger = LoggerFactory.getLogger(NettyClientHandler.class);
-
 
     /**
      * 通道读就绪时触发
@@ -29,7 +27,7 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter {
 
         try {
             RpcResponse rpcResponse = (RpcResponse) msg;
-            logger.info(String.format("client receive msg: %s", rpcResponse));
+            log.info(String.format("client receive msg: %s", rpcResponse));
             // 声明一个 AttributeKey 对象
             AttributeKey<RpcResponse> key = AttributeKey.valueOf("rpcResponse" + rpcResponse.getRequestId());
             // 将服务端的返回结果保存到 AttributeMap 上，AttributeMap 可以看作是一个Channel的共享数据源
@@ -44,7 +42,7 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        logger.error("client catch exception");
+        log.error("client catch exception");
         cause.printStackTrace();
         ctx.close();
     }
